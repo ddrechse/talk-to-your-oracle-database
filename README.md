@@ -36,39 +36,52 @@ Human readable results ← AI Model (formats) ← Raw SQL results
 
 ## 🎯 Quick Start
 
-### 1. Start Oracle Database
+### 1. Set Up Oracle Database
 
+**Option A: Automated Docker Setup (Recommended)**
 ```bash
-# Option A: Docker (Recommended for demo)
+git clone <this-repo>
+cd ai-oracle-sqlcl-demo
+chmod +x scripts/docker_setup.sh
+./scripts/docker_setup.sh
+```
+
+**Option B: Manual Docker Setup**
+```bash
+# Start Oracle Free 23ai container
 docker run --name oracle-demo -d -p 1521:1521 \
   -e ORACLE_PASSWORD=Welcome12345 \
   -e APP_USER=hr \
   -e APP_USER_PASSWORD=Welcome12345 \
   gvenzl/oracle-free:23.7-slim-faststart
+
+# Wait for database to start (2-3 minutes)
+docker logs -f oracle-demo
 ```
 
-### 2. Set Up Project
+### 2. Create HR Schema and Load Data
 
 ```bash
-git clone <this-repo>
-cd ai-oracle-sqlcl-demo
-code .
-```
+# Connect to database
+sql hr/Welcome12345@localhost:1521/FREEPDB1
 
-### 3. Install VS Code Extensions
-
-- **Oracle SQL Developer** - Database management
-- **Cline** - AI assistant
-
-### 4. Create Sample Data
-
-```sql
--- Run the setup script
+# Create schema and load sample data
 @sql/setup/create_hr_schema.sql
 @sql/setup/load_sample_data.sql
 ```
 
-### 5. Configure MCP Connection
+### 3. Set Up VS Code Environment
+
+```bash
+# Open project in VS Code
+code .
+```
+
+**Install Extensions**:
+- **Oracle SQL Developer** - Database management
+- **Cline** - AI assistant
+
+### 4. Configure MCP Connection
 
 ```bash
 # Create saved connection for MCP
@@ -77,15 +90,9 @@ conn -save hr_demo -savepwd
 exit
 ```
 
-### 6. Start AI-Database Bridge
+### 5. Configure Cline MCP Settings
 
-```bash
-sql -mcp
-```
-
-### 7. Configure Cline
-
-Add to `cline_mcp_settings.json`:
+In VS Code, add to `cline_mcp_settings.json`:
 ```json
 {
   "mcpServers": {
@@ -98,7 +105,13 @@ Add to `cline_mcp_settings.json`:
 }
 ```
 
-### 8. Try Natural Language Queries
+### 6. Start AI-Database Bridge
+
+```bash
+sql -mcp
+```
+
+### 7. Try Natural Language Queries
 
 In Cline, try:
 ```
@@ -109,28 +122,17 @@ In Cline, try:
 
 ```
 ai-oracle-sqlcl-demo/
-├── README.md
+├── README.md                    # This file - complete guide
+├── SETUP_GUIDE.md              # Detailed setup instructions
 ├── docs/
-│   ├── SETUP_GUIDE.md           # Detailed setup instructions
-│   ├── AUTONOMOUS_DB.md         # Autonomous Database setup
-│   ├── TROUBLESHOOTING.md       # Common issues and solutions
-│   └── EXAMPLE_QUERIES.md       # Natural language query examples
+│   ├── TROUBLESHOOTING.md      # Common issues and solutions
+│   └── EXAMPLE_QUERIES.md      # Natural language query examples
 ├── sql/
-│   ├── setup/
-│   │   ├── create_hr_schema.sql # HR database schema
-│   │   └── load_sample_data.sql # Sample employee data
-│   ├── examples/
-│   │   ├── basic_queries.sql    # Simple examples
-│   │   ├── analytics.sql        # Advanced analytics
-│   │   └── dashboards.sql       # Dashboard queries
-│   └── generated/               # AI-generated queries
-├── config/
-│   ├── cline_mcp_settings.json  # MCP configuration template
-│   └── sqlcl_connections.md     # Connection setup guide
+│   └── setup/
+│       ├── create_hr_schema.sql # HR database schema
+│       └── load_sample_data.sql # Sample employee data
 └── scripts/
-    ├── docker_setup.sh          # Docker Oracle setup
-    ├── test_connection.sh       # Connection validation
-    └── start_demo.sh            # Complete demo startup
+    └── docker_setup.sh         # Automated Docker Oracle setup
 ```
 
 ## 🎮 Demo Scenarios
@@ -170,9 +172,7 @@ ai-oracle-sqlcl-demo/
 - Perfect for learning and demos
 
 ### Production Setup (Autonomous Database)
-- Enterprise-grade Oracle features
-- Managed service benefits
-- See [docs/AUTONOMOUS_DB.md](docs/AUTONOMOUS_DB.md)
+For enterprise/production use, you can also connect to Oracle Autonomous Database. The same natural language queries work identically - just use different connection parameters. See [SETUP_GUIDE.md](SETUP_GUIDE.md) for Autonomous Database configuration.
 
 ### Existing Oracle Database
 - Works with any Oracle 19c+ instance
@@ -223,11 +223,13 @@ See [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) for detailed solutions.
 
 ## 🎓 Learning Path
 
-1. **Start with basic queries**: Table exploration, simple selects
+1. **Start with basic queries**: See [docs/EXAMPLE_QUERIES.md](docs/EXAMPLE_QUERIES.md) for natural language examples
 2. **Try analytics**: Aggregations, grouping, rankings
-3. **Explore advanced features**: Window functions, CTEs, analytics
+3. **Explore advanced features**: Window functions, CTEs, analytics  
 4. **Create dashboards**: Multi-query analytical reports
 5. **Generate documentation**: Schema analysis and documentation
+
+For detailed setup instructions, see [SETUP_GUIDE.md](SETUP_GUIDE.md).
 
 ## 🤝 Contributing
 
